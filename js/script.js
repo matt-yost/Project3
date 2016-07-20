@@ -42,6 +42,30 @@ var tshirtColor = function(){
   });
 }
 
+// Define checkboxes
+var frameworks = $("input[name='js-frameworks']");
+var libs = $("input[name='js-libs']");
+var express = $("input[name='express']");
+var node = $("input[name='node']");
+
+var eventSelector = function(input, conflict){
+  $(".activities").on("change", function(){
+    if($(input).prop("checked")){
+      $(conflict).attr("disabled", true);
+      $(conflict).parent().css({"text-decoration": "line-through",
+                                "color": "lightgrey"});
+    } else {
+      $(conflict).attr("disabled", false);
+      $(conflict).parent().css({"text-decoration": "none",
+                                "color": "initial"});
+    }
+  });
+}
+
 //Function calls
 customTitle();
 tshirtColor();
+eventSelector(frameworks,express);
+eventSelector(libs,node);
+eventSelector(express,frameworks);
+eventSelector(node,libs);
