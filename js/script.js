@@ -1,6 +1,5 @@
-// On load focus on first field and hide color choices
+// On load focus on first field
 $("#name").focus();
-$("#colors-js-puns").hide();
 
 // Hides children of a given element
 var hideChildren = function(e){
@@ -62,6 +61,33 @@ var eventSelector = function(input, conflict){
   });
 }
 
+var totalCost = function(){
+  $('.activities input').on('click', function() {
+      var total = 0;
+      $('.activities input:checked').each(function() {
+          total += parseInt($(this).val());;
+      });
+      $('#total-cost').text("Total cost: $" + total);
+    });
+  }
+
+  var creditCard = function(){
+    //$("#payment").val("credit card");
+
+    $("#payment").on("change", function() {
+      if($("#payment").val() === "credit card"){
+        $("#paypal").hide();
+        $("#bitcoin").hide();
+      } else if($("#payment").val() === "paypal"){
+        $("#bitcoin").hide();
+        $("#paypal").show();
+      } else if($("#payment").val() === "bitcoin") {
+        $("#paypal").hide();
+        $("#bitcoin").show();
+      }
+    });
+  }
+
 //Function calls
 customTitle();
 tshirtColor();
@@ -69,3 +95,5 @@ eventSelector(frameworks,express);
 eventSelector(libs,node);
 eventSelector(express,frameworks);
 eventSelector(node,libs);
+totalCost();
+creditCard();
