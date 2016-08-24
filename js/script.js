@@ -1,47 +1,42 @@
 // On load focus on first field
 $("#name").focus();
-$("#zip-error").hide();
-$("#credit-error").hide();
 
-// Hides children of a given element
+// Function to hide children of a given element
 var hideChildren = function(e){
   $(e).children().hide();
-}
+};
 
 // If "other" is selected for Job Role append text field
-var customTitle = function(){
-  $("#title").on("change",function(){
-    if($(this).val() === "other"){
-      $(".basic-info").append("<input type='text' id='other-title' placeholder='Your Title'>");
-      $("#other-title").focus();
-    } else {
-      $('#other-title').remove()
-    }
-  });
-}
+$("#title").on("change",function(){
+  if($(this).val() === "other"){
+    $(".basic-info").append("<input type='text' id='other-title' placeholder='Your Title'>");
+    // After "other" field is appended focus
+    $("#other-title").focus();
+  } else {
+    $('#other-title').remove();
+  }
+});
 
 // Shows corresponding T-Shirt color for design selection
-var tshirtColor = function(){
-  $("#design").on("change", function(){
-    // Initially hide all the colors
-    hideChildren("#color");
-    // Show corresponding colors
-    if($(this).val() === "js puns"){
-      $("option[value='cornflowerblue']").show();
-      $("option[value='darkslategrey']").show();
-      $("option[value='gold']").show();
-      $("#color").val('cornflowerblue').show();
-    } else if($(this).val() === "heart js") {
-      $("option[value='tomato']").show();
-      $("option[value='steelblue']").show();
-      $("option[value='dimgrey']").show();
-      $("#color").val('tomato').show();
-    } else {
-      $("#color").val('default');
-    }
-    $("#colors-js-puns").show();
-  });
-}
+$("#design").on("change", function(){
+  // Initially hide all the colors
+  hideChildren("#color");
+  // Show corresponding colors
+  if($(this).val() === "js puns"){
+    $("option[value='cornflowerblue']").show();
+    $("option[value='darkslategrey']").show();
+    $("option[value='gold']").show();
+    $("#color").val('cornflowerblue').show();
+  } else if($(this).val() === "heart js") {
+    $("option[value='tomato']").show();
+    $("option[value='steelblue']").show();
+    $("option[value='dimgrey']").show();
+    $("#color").val('tomato').show();
+  } else {
+    $("#color").val('default');
+  }
+  $("#colors-js-puns").show();
+});
 
 // Define checkboxes
 var frameworks = $("input[name='js-frameworks']");
@@ -49,6 +44,7 @@ var libs = $("input[name='js-libs']");
 var express = $("input[name='express']");
 var node = $("input[name='node']");
 
+// If event is checked, any conflicting events will be disabled and styled
 var eventSelector = function(input, conflict){
   $(".activities").on("change", function(){
     if($(input).prop("checked")){
@@ -61,47 +57,30 @@ var eventSelector = function(input, conflict){
                                 "color": "initial"});
     }
   });
-}
+};
 
-var totalCost = function(){
-  $('.activities input').on('click', function() {
-    var total = 0;
-    $('.activities input:checked').each(function() {
-      total += parseInt($(this).val());
-    });
-    $('#total-cost').text("Total cost: $" + total);
+// Calculate the total cost of any events clicked
+$('.activities input').click(function() {
+  var total = 0;
+  $(".activities input:checked").each(function() {
+    total += parseInt($(this).val());
   });
-}
+  $("#total-cost").text("Total cost: $" + total);
+});
 
-var payMethod = function(){
-  $("#paypal, #bitcoin").hide();
-  $("#payment").on("change", function() {
-    if($("#payment").val() === "credit card"){
-      $("#credit-card").show();
-      $("#paypal, #bitcoin").hide();
-    } else if($("#payment").val() === "paypal"){
-      $("#credit-card, #bitcoin").hide();
-      $("#paypal").show();
-      //ccIsValid = true;
-    } else if($("#payment").val() === "bitcoin") {
-      $("#credit-card, #paypal").hide();
-      $("#bitcoin").show();
-      //ccIsValid = true;
-    }
-  });
-}
-
-var zipIsValid = false;
+// Initiate validation booleans
 var ccIsValid = false;
-var ccvIsValid = false;
+var noCC = false;
+var zipIsValid = false;
+var cvvIsValid = false;
 var nameIsValid = false;
 var emailIsValid = false;
 var activityIsValid = false;
 
-ccIsValid = $("#cc-num").validateCreditCard().valid;
-
+// Use JqueryCreditCardValidator.js to check if CC number is valid
 $("#credit-card").focusout(function(){
   ccIsValid = $("#cc-num").validateCreditCard().valid;
+  // Style based on true/false
   if(ccIsValid){
     $("label[for=cc-num]").css("color", "black");
   } else {
@@ -109,6 +88,29 @@ $("#credit-card").focusout(function(){
   }
 });
 
+// Show and hide correct inforamtion based on payment selection
+var payMethod = function(){
+  // Initially show credit card payment
+  $("#paypal, #bitcoin").hide();
+  $("#payment").val("credit card");
+  // Show and hide corresponding elements
+  $("#payment").on("change", function() {
+    if($("#payment").val() === "credit card"){
+      $("#credit-card").show();
+      $("#paypal, #bitcoin").hide();
+    } else if($("#payment").val() === "paypal"){
+      $("#credit-card, #bitcoin").hide();
+      $("#paypal").show();
+      noCC = true;
+    } else if($("#payment").val() === "bitcoin") {
+      $("#credit-card, #paypal").hide();
+      $("#bitcoin").show();
+      noCC = true;
+    }
+  });
+};
+
+// Check for zip of at least 5 characters
 $("#zip").focusout(function(){
   var zipLength = $("#zip").val().length;
   if(zipLength < 5){
@@ -117,11 +119,22 @@ $("#zip").focusout(function(){
     $("label[for=zip]").css("color", "black");
     zipIsValid = true;
   }
-  return zipIsValid;
 });
 
+// Check for cvv of 3 numbers
+$("#cvv").focusout(function(){
+  var cvvLength = $(this).val().length;
+  if(cvvLength !== 3){
+    $("label[for=cvv]").css("color", "red");
+  } else {
+    $("label[for=cvv]").css("color", "black");
+    cvvIsValid = true;
+  }
+});
+
+// Check for filled in name field
 $("#name").focusout(function(){
-  if($("#name").val() == ""){
+  if($("#name").val() === ""){
     $("label[for=name]").css("color", "red");
     nameIsValid = false;
   } else {
@@ -130,37 +143,48 @@ $("#name").focusout(function(){
   }
 });
 
+// Check for valid email address
 $("#mail").focusout(function(){
   var email = $("#mail").val();
   if( /(.+)@(.+){2,}\.(.+){2,}/.test(email) ){
-    // valid email
+    // Valid email
     $("label[for=mail]").css("color", "black");
     emailIsValid = true;
   } else {
-    // invalid email
+    // Invalid email
     $("label[for=mail]").css("color", "red");
     emailIsValid = false;
   }
 });
 
-var activitiesSelected = $(".activities input");
+
+// On submit, check for at least one checked box
 $("button[type='submit']").click(function(){
+  var activitiesSelected = $(".activities input");
   activitiesSelected.each(function(){
     if($(this).prop("checked")){
       activityIsValid = true;
-    };
+    }
   });
-  console.log(activityIsValid);
+  // Check for any form errors w/ credit card
+  var ccReady = (zipIsValid && ccIsValid && cvvIsValid && nameIsValid && emailIsValid && activityIsValid);
+  // Check for any form errors w/out credit card
+  var noCcReady = (nameIsValid && emailIsValid && activityIsValid && noCC);
+  var ready = (ccReady || noCcReady);
+  if(ready){
+    event.preventDefault();
+    $("#form-error").addClass("is-hidden")
+    // Send form
+  } else {
+    event.preventDefault();
+    // Dont send form and show error message
+    $("#form-error").removeClass("is-hidden");
+  }
 });
 
-
-
 //Function calls
-customTitle();
-tshirtColor();
 eventSelector(frameworks,express);
 eventSelector(libs,node);
 eventSelector(express,frameworks);
 eventSelector(node,libs);
-totalCost();
 payMethod();

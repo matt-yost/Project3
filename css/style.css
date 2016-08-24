@@ -118,6 +118,14 @@ button:hover {
 	background: #184c62;
 }
 
+#other-title {
+  margin-top: 10px;
+}
+
+#form-error {
+  color: red;
+}
+
 /* =================================
   Page Styles
 ==================================== */

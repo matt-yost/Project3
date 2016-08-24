@@ -61,7 +61,7 @@
           </select>
         </div>
 
-        <div id="colors-js-puns" class="is-hidden">
+        <div id="colors-js-puns">
           <label for="color">Color:</label>
           <select id="color">
             <option value="default"> <--Select a design pattern</option>
@@ -150,8 +150,11 @@
 
       <button type="submit">Register</button>
 
-    </form>
+      <div id='form-error' class="is-hidden">
+        <p>Form not complete. All fields must be complete to submit.</p>
+      </div>
 
+    </form>
 	</div>
   <script src="js/script.js"></script>
 </body>
