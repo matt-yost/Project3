@@ -173,7 +173,7 @@ $("button[type='submit']").click(function(){
   var ready = (ccReady || noCcReady);
   if(ready){
     event.preventDefault();
-    $("#form-error").addClass("is-hidden")
+    $("#form-error").addClass("is-hidden");
     // Send form
   } else {
     event.preventDefault();
